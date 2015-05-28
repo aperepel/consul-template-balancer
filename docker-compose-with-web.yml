@@ -1,0 +1,54 @@
+consul:
+  image: sequenceiq/consul:v0.5.0
+  environment:
+    # TODO no way to expand shell env variables
+    - BRIDGE_IP=172.17.42.1
+  command: -server -bootstrap -advertise 172.17.42.1
+  hostname: consul1
+  ports:
+    - 0.0.0.0:53:53/udp
+    - 0.0.0.0:8400:8400
+    - 0.0.0.0:8500:8500
+
+
+registrator:
+  image: gliderlabs/registrator
+  command: consul://172.17.42.1:8500
+  volumes:
+    - /var/run/docker.sock:/tmp/docker.sock
+
+
+haproxy:
+  image: aperepel/consul-template-balancer
+  ports:
+    - 80:80
+  volumes:
+    - .:/consul-template
+
+# TODO no decent way to specify dependencies? only found some hacks
+# a good workaround is to disable webN container start and spin up
+# via an old 'docker run -P' command - then we don't care about ports :)
+web1:
+  image: jlordiales/python-micro-service:latest
+  hostname: node1
+  environment:
+    - SERVICE_NAME=web
+  ports:
+    # TODO no equivalent of "docker run -P" :(
+    - 5000
+
+web2:
+  image: jlordiales/python-micro-service:latest
+  hostname: node2
+  environment:
+    - SERVICE_NAME=web
+  ports:
+    - 5000
+
+web3:
+  image: jlordiales/python-micro-service:latest
+  hostname: node3
+  environment:
+    - SERVICE_NAME=web
+  ports:
+    - 5000
