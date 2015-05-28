@@ -112,7 +112,7 @@ docker run -d --name consul_templ -p 80:80 \
 There's a lot of moving pieces, here's a trick to help one make more sense of it all:
 - Mount a directory with a custom template, as recommended above (or save an example one)
 - Keep the `registrator` terminal visible and follow its logs with `docker logs -f registrator`
-- Open the `haproxy.cfg` file in a text editor which supports auto-refresh (e.g. [Atom](https://atom.io/) is great at this)
+- Open the `haproxy.cfg` file in a text editor which supports auto-refresh (e.g. [Atom](https://atom.io/) is great at this). `tail -f` didn't quite work for me.
 - Open a browser and go to HAProxy stats (available at your host's addrss, for boot2docker this is usually http://192.168.59.103/haproxy)
 - (Good idea) turn on a 1s auto-refresh for the HAProxy stats page (e.g. any browser extension like [Auto Refresh Plus](https://chrome.google.com/webstore/detail/auto-refresh-plus/hgeljhfekpckiiplhkigfehkdpldcggm?hl=en) will do)
 - Kill, start and stop containers at will:
