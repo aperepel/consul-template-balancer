@@ -14,5 +14,5 @@ backend tomcat
   timeout connect 5000ms
   timeout server  5000ms
   balance roundrobin
-  {{range service "tomcat"}}
+  {{range service "web"}}
   server {{.Name}}.{{.Port}} {{.Address}}:{{.Port}} check{{end}}
