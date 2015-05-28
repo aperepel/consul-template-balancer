@@ -105,6 +105,8 @@ backend tomcat
 
 
 ## Extras
+
+#### 'Live' Show!
 There's a lot of moving pieces, here's a trick to help one make more sense of it all:
 - Mounted a directory with a custom template, as recommended above
 - Keep the `registrator` terminal visible and follow its logs with `docker logs -f registrator`
@@ -119,6 +121,13 @@ docker start node1 node2 node3
 ```
 Watch events processed in the registrator window, observe changes to the `haproxy.cfg` file (list of servers available), notice how HAProxy stats page updates the backend servers list on config reloads.
 
+
+#### Look Ma! A Nice GUI!
+Earlier in the doc we bound Consul to `0.0.0.0`. This was done to be able hit it from your workstation easily, like http://192.168.59.103:8500
+
+*Bonus:* this is also a REST API endpoint, see https://www.consul.io/docs/agent/http/catalog.html
+
+#### Messing Around
 If you want to get into this image's shell (there's no `bash` installed, only `sh`):
 ```bash
 # assuming we named the container 'consul_templ'
