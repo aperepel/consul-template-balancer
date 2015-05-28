@@ -37,7 +37,9 @@ docker run -d \
 
 #### Start Registrator
 ```bash
-docker run -d --name=registrator -v /var/run/docker.sock:/tmp/docker.sock gliderlabs/registrator consul://$BRIDGE_IP:8500
+docker run -d --name=registrator \
+           -v /var/run/docker.sock:/tmp/docker.sock \
+           gliderlabs/registrator consul://$BRIDGE_IP:8500
 ```
 
 To see Registrator in action:
@@ -47,20 +49,10 @@ docker logs -f registrator
 
 #### Start HAProxy with Consul Template
 
-Listen on port 80 and manage
+Listen on port 80 and use defaults:
 ```bash
-docker run -d --name consul_templ -p 80:80 -v `pwd`:/consul-template aperepel/consul-template-haproxy
+docker run -d --name consul_templ -p 80:80 aperepel/consul-template-balancer
 ```
-
-
-(Optional) Mapping the volume:
-
-```bash
-docker run -d --name consul_templ -p 80:80 -v `pwd`:/consul-template aperepel/consul-template-haproxy
-```
-
-*Note:* you can also map the `haproxy.cfg.tmpl` file only, but mapping a directory will let you easily monitor the template processing results in `haproxy.cfg`.
-
 
 
 #### Start backend web servers
@@ -73,7 +65,7 @@ docker run -d -P --name node2 -h node2 -e SERVICE_NAME=web jlordiales/python-mic
 docker run -d -P --name node3 -h node3 -e SERVICE_NAME=web jlordiales/python-micro-service:latest
 ```
 
-Go to your host exposed address, for boot2docker this will be http://192.168.59.103/haproxy. Watch how it greets you from different node every time (round-robin balancer).
+Go to your host exposed address, for boot2docker this will be http://192.168.59.103. Watch how it greets you from different node every time (round-robin balancer).
 
 *Tip:* this image doesn't care what you are running, as long as it talks HTTP (but see below, this can be customized).
 
@@ -103,12 +95,22 @@ backend tomcat
   server {{.Name}}.{{.Port}} {{.Address}}:{{.Port}} check{{end}}
 ```
 
+Mapping the volume:
+
+```bash
+docker run -d --name consul_templ -p 80:80 \
+           -v `pwd`:/consul-template \
+           aperepel/consul-template-balancer
+```
+
+*Note:* you can also map the `haproxy.cfg.tmpl` file only, but mapping a directory will let you easily monitor the template processing results in `haproxy.cfg`.
+
 
 ## Extras
 
 #### 'Live' Show!
 There's a lot of moving pieces, here's a trick to help one make more sense of it all:
-- Mounted a directory with a custom template, as recommended above
+- Mount a directory with a custom template, as recommended above (or save an example one)
 - Keep the `registrator` terminal visible and follow its logs with `docker logs -f registrator`
 - Open the `haproxy.cfg` file in a text editor which supports auto-refresh (e.g. [Atom](https://atom.io/) is great at this)
 - Open a browser and go to HAProxy stats (available at your host's addrss, for boot2docker this is usually http://192.168.59.103/haproxy)
