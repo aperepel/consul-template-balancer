@@ -69,6 +69,8 @@ Go to your host exposed address, for boot2docker this will be http://192.168.59.
 
 *Tip:* this image doesn't care what you are running, as long as it talks HTTP (but see below, this can be customized).
 
+The most interesting part (and where magic happens) is the `-P` switch. It simply instructs Docker to map every port exposed by the container to a random available host port. One doesn't even have to know which port it is (e.g. python on port 5000, tomcat on 8080, etc, just swap the images to run and make sure they have the `-e SERVICE_NAME=web` variable set). Registrator picks up on the actually bound port and keeps Consul registry up-to-date.
+
 
 
 #### Running with a custom template
